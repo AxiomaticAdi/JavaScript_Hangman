@@ -6,7 +6,7 @@ const prompt = require("prompt-sync")({ sigint: true });
 class Game {
 	constructor() {
 		this.currentAnswer =
-			currentAnswerBank[Math.floor(Math.random() * currentAnswerBank.length)];
+			answerBank[Math.floor(Math.random() * answerBank.length)];
 
 		this.currentLives = 5;
 		this.usedLetters = [];
@@ -18,7 +18,7 @@ class Game {
 }
 
 // POSSIBLE ANSWERS //
-const currentAnswerBank = [
+const answerBank = [
 	"APPLE",
 	"BLAZE",
 	"CHART",
@@ -56,26 +56,32 @@ function hiddenAnswerUpdate(string) {
 // Prompt user for input
 function userInputRequest() {
 	console.log(""); // Line break
-	const userInput = prompt("Enter a letter to guess: ");
+	const userInput = prompt("Enter a letter to guess: ").toUpperCase();
 
-	if (checkInputValidLetter(userInput)) {
-		return userInput;
-	} else {
-		console.log("That was not a valid input! Try again");
+	if (checkInputNotChar(userInput)) {
+		console.log("");
+		console.log("Your guess must be a letter between A and Z");
 		userInputRequest();
+	} else if (checkInputNotNew(userInput)) {
+		console.log("");
+		console.log("You have already guessed this letter.");
+		console.log(`Your current guesses include ${currentGame.usedLetters}`);
+		userInputRequest();
+	}
+	// If input clears all checks, return input (already uppercase)
+	else {
+		return userInput;
 	}
 }
 
-// Checks if user input is valid
-function checkInputValidLetter(input) {
-	// Boolean is input a single char?
-	const singleLetter = input.length === 1;
+// Returns TRUE if input is NOT a character
+function checkInputNotChar(input) {
+	return !(input.length === 1 && input.match(/[A-Z]/i));
+}
 
-	// Boolean is input a new char?
-	const newLetter = !currentGame.usedLetters.includes(input);
-
-	// If input meets both criteria return true
-	return singleLetter && newLetter;
+// Returns TRUE if input has already been guessed this game
+function checkInputNotNew(input) {
+	return currentGame.usedLetters.includes(input);
 }
 
 function processInput(input) {
@@ -107,16 +113,14 @@ function processInput(input) {
 		if (currentGame.currentLives <= 0) {
 			return lose();
 		} else {
-			console.log(`No ${input.toUpperCase()} in this word!`);
+			console.log(`No ${input} in this word!`);
 			console.log(`You have ${currentGame.currentLives} lives left!`);
 			console.log(currentGame.hiddenAnswer);
 		}
 	}
 	// Else share updated progress and prompt again
 	else {
-		console.log(
-			`Your guess ${input.toUpperCase()} appears ${changeCounter} times(s)!`,
-		);
+		console.log(`Your guess ${input} appears ${changeCounter} time(s)!`);
 		console.log(currentGame.hiddenAnswer);
 	}
 }
@@ -128,12 +132,15 @@ function checkAlive() {
 }
 
 function win() {
+	console.log("");
 	console.log("You got it right!");
+	console.log(`The current answer was ${currentGame.currentAnswer}`);
 	currentGame.gameOver = true;
 	playAgain();
 }
 
 function lose() {
+	console.log("");
 	console.log(`You lost - the correct answer was ${currentGame.currentAnswer}`);
 	currentGame.gameOver = true;
 	playAgain();
@@ -148,7 +155,9 @@ function playAgain() {
 	) {
 		return hangman();
 	} else {
+		console.log("");
 		console.log("Thanks for playing!");
+		console.log("");
 		return process.exit();
 	}
 }
@@ -179,8 +188,6 @@ hangman();
 //have the player choose if they would like to add a letter or complete the word
 
 //difficulty choice: can choose easy medium or hard and each one will give you a different length of word to solve
-
-//add a play again feature when you get game over: yes start the program over no, terminate program
 
 //add a score feature to each letter and multiply each unguessed letter by 2x.
 
