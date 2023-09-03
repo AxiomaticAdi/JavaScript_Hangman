@@ -1,8 +1,8 @@
 // VSCODE ENABLE PROMPT //
+// Delete this line if prompt() works natively on your client!
 const prompt = require("prompt-sync")({ sigint: true });
 
 // GAME DEFINITION //
-
 class Game {
 	constructor() {
 		this.currentAnswer =
@@ -55,7 +55,7 @@ function hiddenAnswerUpdate(string) {
 
 // Prompt user for input
 function userInputRequest() {
-	// WIP also display a list of letters already looked at
+	console.log(""); // Line break
 	const userInput = prompt("Enter a letter to guess: ");
 
 	if (checkInputValidLetter(userInput)) {
@@ -108,6 +108,7 @@ function processInput(input) {
 			return lose();
 		} else {
 			console.log(`No ${input.toUpperCase()} in this word!`);
+			console.log(`You have ${currentGame.currentLives} lives left!`);
 			console.log(currentGame.hiddenAnswer);
 		}
 	}
@@ -133,7 +134,7 @@ function win() {
 }
 
 function lose() {
-	console.log("You lost - try again!");
+	console.log(`You lost - the correct answer was ${currentGame.currentAnswer}`);
 	currentGame.gameOver = true;
 	playAgain();
 }
@@ -153,8 +154,9 @@ function playAgain() {
 }
 
 // MAIN EXECUTIVE FUNCTION //
-
 function hangman() {
+	console.log(""); // Line break
+
 	console.log("Welcome to CS Prep Hangman!");
 	currentGame = new Game();
 
@@ -164,6 +166,7 @@ function hangman() {
 	console.log("Time to guess a letter!");
 
 	while (!currentGame.gameOver) {
+		console.log("");
 		const currentInput = userInputRequest();
 		processInput(currentInput);
 	}
