@@ -1,5 +1,5 @@
 // VSCODE ENABLE PROMPT //
-const prompt = require(`prompt-sync`)({ sigint: true });
+const prompt = require("prompt-sync")({ sigint: true });
 
 // GAME DEFINITION //
 
@@ -69,10 +69,10 @@ function userInputRequest() {
 // Checks if user input is valid
 function checkInputValidLetter(input) {
 	// Boolean is input a single char?
-	let singleLetter = input.length === 1;
+	const singleLetter = input.length === 1;
 
 	// Boolean is input a new char?
-	let newLetter = !currentGame.usedLetters.includes(input);
+	const newLetter = !currentGame.usedLetters.includes(input);
 
 	// If input meets both criteria return true
 	return singleLetter && newLetter;
